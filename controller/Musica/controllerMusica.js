@@ -34,7 +34,7 @@ const inserirMusica = async function(musica){
 }
 
 //Função para atualizar uma musica existente
-const utualizarMusica = async function(){
+const atualizarMusica = async function(){
     
 }
 
@@ -52,4 +52,12 @@ const listarMusica = async function(){
 //Função para buscar uma musica pelo ID
 const buscarMusica = async function(){
     
+}
+
+module.exports = {
+    inserirMusica,
+    atualizarMusica,
+    excluirMusica,
+    listarMusica,
+    buscarMusica
 }
