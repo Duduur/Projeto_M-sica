@@ -13,10 +13,9 @@ const ERROR_INTERNAL_SERVER_CONTROLLER = { status : false , status_code: 500, me
 const ERROR_CONTENT_TYPE ={ status :  false , status_code: 415, message: "O content-type encaminhado não é suportado pelo servidor. Você deve encaminhar apenas conteúdos no formato JSON"}
 const ERROR_NOT_FOUND =  { status :  false , status_code: 404, message: "Não foram encontrados itens de retorno!!!"}
 /********************* STATUS CODE DE SUCESSO ****************************/
-const SUCCESS_CREATED_ITEM = {status: true,
-                              status_code: 201,
-                              message: 'Item criado com sucesso'
-}
+const SUCCESS_CREATED_ITEM = {status: true,status_code: 201,message: 'Item criado com sucesso'}
+const SUCCES_DELETE_ITEM = {status: true, status_code: 200, message: 'Item removido com sucesso'}
+const SUCESS_UPDATED_ITEM = {status: true, status_code: 200, message: 'Item atualizado com sucesso'}
 
 
 module.exports = {
@@ -25,5 +24,7 @@ module.exports = {
     ERROR_INTERNAL_SERVER_CONTROLLER,
     ERROR_CONTENT_TYPE,
     ERROR_NOT_FOUND,
-    SUCCESS_CREATED_ITEM
+    SUCCESS_CREATED_ITEM,
+    SUCCES_DELETE_ITEM,
+    SUCESS_UPDATED_ITEM
 }

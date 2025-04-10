@@ -44,18 +44,46 @@ const insertMusica = async function(musica){
     }
 
 }
-
 //Função para atualizar uma musica existente
-const updateMusica = async function(){
-    
-}
+const updateMusica = async function(musica){
+    try {
+        let sql = `update tbl_musica set nome = '${musica.nome}',
+                                        duracao = '${musica.duracao}', 
+                                        data_lancamento = '${musica.data_lancamento}', 
+                                        letra = '${musica.letra}', 
+                                        link = '${musica.link}' 
+                                        where id = ${musica.id} `
 
+        let  result = await prisma.$executeRawUnsafe(sql)
+
+        if(result)
+            return true
+        else
+            return false
+        
+    } catch (error) {
+        return false
+    }
+}
 //Função para excluir uma musica existente
-const deleteMusica = async function(){
-    
+const deleteMusica = async function(id){
+    try {
+
+        let sql = `delete from tbl_musica where id=${id}`
+
+        //
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        if(result)
+            return true
+        else
+            return false
+
+        
+    } catch (error) {
+        return false
+    }
 }
-
-
 //Função para retornar todas as musica do banco de dados
 const selectAllMusica = async function(){
     try {
@@ -75,10 +103,24 @@ const selectAllMusica = async function(){
         return false
     }
 }
-
 //Função para buscar uma musica pelo ID
-const selectByIdMusica = async function(){
+const selectByIdMusica = async function(number){
+    try {
+
+        let id = number
+        //Script SQL
+        let sql = `select * from tbl_musica where id =${id}`
     
+        let result = await  prisma.$queryRawUnsafe(sql)
+
+        if(result)
+            return result
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
 }
 
 module.exports = {
