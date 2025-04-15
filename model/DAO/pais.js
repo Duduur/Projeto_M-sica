@@ -5,30 +5,18 @@
 * Versão: 1.0
 *********************************************************************************************************************************/
 
- //Import da biblioteca do  PrismaClient, para realizar as ações no banco de dados
 const {PrismaClient} = require('@prisma/client')
 
-//Instancia da classe do PrismaClient(criar um objeto)
 const prisma = new PrismaClient()
 
-//Função para inserir uma nova musica
-const insertMusica = async function(musica){
+const insertPais = async function(pais){
     try{
-        let sql  = `insert into tbl_musica (
-                        nome, 
-                        duracao, 
-                        data_lancamento, 
-                        letra, 
-                        link) 
+        let sql  = `insert into tbl_pais_origem (
+                        pais                
+                    ) 
                     values ( 
-                        '${musica.nome}', 
-                        '${musica.duracao}', 
-                        '${musica.data_lancamento}', 
-                        '${musica.letra}', 
-                        '${musica.link}')`
-
-        
-        
+                        '${pais.pais}'
+                    )`
         //Await só vai funcionar se na função estiver com o async
         //Executa um script sql no banco de dados, e aguarda o resultado (retornando um true or false)
         let result  = await prisma.$executeRawUnsafe(sql)
@@ -44,15 +32,10 @@ const insertMusica = async function(musica){
     }
 
 }
-//Função para atualizar uma musica existente
-const updateMusica = async function(musica){
+
+const updatePais = async function(pais){
     try {
-        let sql = `update tbl_musica set nome = '${musica.nome}',
-                                        duracao = '${musica.duracao}', 
-                                        data_lancamento = '${musica.data_lancamento}', 
-                                        letra = '${musica.letra}', 
-                                        link = '${musica.link}' 
-                                        where id = ${musica.id} `
+        let sql = `update tbl_pais_origem set nome = '${pais.pais}' where id = ${pais.id} `
 
         let  result = await prisma.$executeRawUnsafe(sql)
 
@@ -65,11 +48,12 @@ const updateMusica = async function(musica){
         return false
     }
 }
-//Função para excluir uma musica existente
-const deleteMusica = async function(id){
+
+
+const deletePais = async function(id){
     try {
 
-        let sql = `delete from tbl_musica where id=${id}`
+        let sql = `delete from tbl_pais_origem where id=${id}`
 
         //
         let result = await prisma.$executeRawUnsafe(sql)
@@ -84,12 +68,12 @@ const deleteMusica = async function(id){
         return false
     }
 }
-//Função para retornar todas as musica do banco de dados
-const selectAllMusica = async function(){
+
+const selectAllPais = async function(){
     try {
 
         //Script SQL
-        let sql = 'select * from tbl_musica order by id desc'
+        let sql = 'select * from tbl_pais_origem order by id desc'
 
         //Encaminha o script SQL para o Banco de dados
         let result = await prisma.$queryRawUnsafe(sql)
@@ -103,14 +87,14 @@ const selectAllMusica = async function(){
         return false
     }
 }
-//Função para buscar uma musica pelo ID
-const selectByIdMusica = async function(number) {
+
+const selectByIdPais = async function(number) {
     try {
         // Recebe o ID
         let id = number 
         
         // Script SQL 
-        let sql = `select * from tbl_musica where id=${id} `
+        let sql = `select * from tbl_pais_origem where id=${id} `
 
         // Encaminha o Script SQL para o BD
         let result = await prisma.$queryRawUnsafe(sql)
@@ -125,11 +109,10 @@ const selectByIdMusica = async function(number) {
     }
 }
 
-
 module.exports = {
-    insertMusica,
-    updateMusica,
-    deleteMusica,
-    selectAllMusica,
-    selectByIdMusica
+    insertPais,
+    updatePais,
+    deletePais,
+    selectAllPais,
+    selectByIdPais
 }

@@ -7,7 +7,7 @@
 
 //Import da biblioteca para realizar as ações do banco 
 const {PrismaClient} = require('@prisma/client')
-const { selectByIdMusica } = require('./musica')
+
 
 //Classe do PrismaClient(?cria o objeto)
 const prisma = new PrismaClient()
@@ -19,9 +19,9 @@ const insertGenero = async function(genero){
                         genero 
                     )
                     values (
-                        '${genero}')`
+                        '${genero.genero}')`
 
-    
+
         let result = await prisma.$executeRawUnsafe(sql)
 
             if (result) 
@@ -37,7 +37,7 @@ const insertGenero = async function(genero){
 //Função para atualizar uma genero que já existe
 const updateGenero = async function(genero){
     try {
-        let sql = `update tbl_genero set genero = '${genero.genero}'`
+        let sql = `update tbl_genero set genero = '${genero.genero}' where id= ${genero.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -53,7 +53,8 @@ const updateGenero = async function(genero){
 //Função para excluir um genero existente
 const deleteGenero = async function(id){
     try {
-        let sql = `delete from tbl_musica where id=${id}`
+
+        let sql = `delete from tbl_genero where id=${id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -92,7 +93,7 @@ const selectByIdGenero = async function(number){
 
         let id = number
 
-        let sql = `select * from tbl_musica where id=${id}`
+        let sql = `select * from tbl_musica where id =${id}`
 
         let result= await prisma.$queryRawUnsafe(sql)
 
@@ -112,5 +113,5 @@ module.exports = {
     updateGenero,
     deleteGenero,
     selectAllGenero,
-    selectByIdMusica
+    selectByIdGenero
 }

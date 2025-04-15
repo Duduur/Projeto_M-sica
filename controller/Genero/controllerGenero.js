@@ -21,7 +21,6 @@ const inserirGenero = async function(genero, contentType) {
             }else{
 
                 let resultGenero = await generoDAO.insertGenero(genero)
-
                 if(resultGenero){
                     return message.SUCCESS_CREATED_ITEM//201
                 }else{
@@ -36,19 +35,21 @@ const inserirGenero = async function(genero, contentType) {
     }
 }
 
-const atualizarGenero = async function(id, genero, contentType){
+const atualizarGenero = async function(numero, genero, contentType){
     try {
         
-        if (String(contentType).toLowerCase()== 'appliation/json'){
+        let id = numero
+        
+        if (String(contentType).toLowerCase()== 'application/json'){
             if (
-                genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.genero >100 ||
+                genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.genero.lenght >100 ||
                 id == '' || id == null || id == undefined || isNaN(id)
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             }else{
                 
-                let result = await musicaDAO.selectByIdGenero(id)
-
+                let result = await generoDAO.selectByIdGenero(id)
+                console.log(result)
                 if(result != false || typeof(result) == 'object'){
                     if(result.lenght > 0 ){
                         //Adiciona o atributo do ID no JSON com os dados recebidos do corpo da requisição
@@ -73,17 +74,18 @@ const atualizarGenero = async function(id, genero, contentType){
     }
 }
 
-const excluirGenero = async function(id){
+const excluirGenero = async function(numero){
    try {
+
+    let id = numero
 
     if(id == '' || id == null || id == undefined || isNaN(id)){
         return message.ERROR_REQUIRED_FIELDS
     }else{
         
         //Antes de excluir estamos verificando se o id enviado existe 
-        let resultGenero = await musicaDAO.selectByIdGenero(id)
-
-        if(resultGenero= false || typeof(resultGenero)== "object"){
+        let resultGenero = await generoDAO.selectByIdGenero(id)
+        if(resultGenero!= false || typeof(resultGenero)== "object"){
             if(resultGenero.length > 0){
                 //delete
                 let result = await generoDAO.deleteGenero(id)
@@ -112,7 +114,7 @@ const listarGenero = async function(){
 
         //Chama a função para retornar as musicas do banco de dados
         let resultGenero = await generoDAO.selectAllGenero()
-
+    
         if(resultGenero != false){
             if(resultGenero.length > 0){
                 //Cria um JSON para colocar o ARRAY de musicas
@@ -136,18 +138,22 @@ const listarGenero = async function(){
     
 }
 
-const buscarGenero = async function(id){
+const buscarGenero = async function(numero){
     try {
+
+        let id = numero
+
+        let dadosGenero = {}
 
         if(
             id == "" || id == undefined || id == null || isNaN(id)){ 
             return message.ERROR_REQUIRED_FIELDS//400   
         }else{
     
-            let dadosGenero = {}
+            
 
             let resultGenero = await generoDAO.selectByIdGenero(id)
-
+           
             if(resultGenero != false || typeof(resultGenero)== "object"){
                 if(resultGenero.length > 0){
                     dadosGenero.status = true
