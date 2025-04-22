@@ -1,29 +1,35 @@
 /********************************************************************************************************************************
-* Objetivo: Controller reponsavel pela integração entre o APP e a Model (CRUD de dados),
+* Objetivo: Controller rsponsavel pela integração entre o APP e a Model (CRUD de dados),
 *           Validaçôes, tratamento  de dados etc...
-* Data: 15/04/2025
+* Data: 11/02/2025
 * Autor: Eduardo
 * Versão: 1.0
 *********************************************************************************************************************************/
 
+//Import do arquivo de mensagens e status code
 const message = require('../../modulo/config.js')
 
-const paisDAO = require('../../model/DAO/pais.js')
+//Import para realizar o CRUD no banco de dados
+const userDAO = require('../..//model/DAO/usuario.js')
 
-const inserirPais = async function(pais, contentType){
+//Função para inserir uma nova ususuario
+const inserirUsuario = async function(user, contentType){
     try {
 
         if(String(contentType).toLocaleLowerCase() == 'application/json' )
          { 
             if(
-            pais.pais            == '' || pais.pais            == null || pais.pais            == undefined || pais.pais.length            > 100 
+            user.nome            == '' || user.nome            == null || user.nome            == undefined || user.nome.length            > 100 ||
+            user.email         == '' || user.email         == null || user.email         == undefined || user.email.length         > 100   ||
+            user.senha == '' || user.senha == null || user.senha == undefined || user.senha.length > 100  ||
+            user.data_nascimento   == undefined || user.data_nascimento      == null|| user.data_nascimento.length  > 10 || user.data_nascimento == '' 
             ){
                 return message.ERROR_REQUIRED_FIELDS//status code 400
          }else{
-                //encaminhando os dados da pais para o DAO realizar o insert no Banco de dados
-                let resultpais = await paisDAO.insertPais(pais)
-                
-                if(resultpais){
+                //encaminhando os dados da user para o DAO realizar o insert no Banco de dados
+                let resultuser = await userDAO.insertUsuario(user)
+
+                if(resultuser){
                     return message.SUCCESS_CREATED_ITEM // 201
                 }else{
                     return message.ERROR_INTERNAL_SERVER_MODEL//500
@@ -36,29 +42,34 @@ const inserirPais = async function(pais, contentType){
         return message.ERROR_INTERNAL_SERVER_CONTROLLER//500
     }
 }
-const atualizarPais = async function(id, pais, contentType){
+
+//Função para atualizar uma user existente
+const atualizarUsuario = async function(id, user, contentType){
     try {
         if(String(contentType).toLocaleLowerCase() == 'application/json' )
             { 
                if(
-               pais.pais            == '' || pais.pais            == null || pais.pais            == undefined || pais.pais.length            > 100 ||
+               user.nome            == '' || user.nome            == null || user.nome            == undefined || user.nome.length            > 100 ||
+               user.email         == '' || user.email         == null || user.email         == undefined || user.email.length         > 100   ||
+               user.senha == '' || user.senha == null || user.senha == undefined || user.senha.length > 10  ||
+               user.data_nascimento   == undefined || user.data_nascimento      == null|| user.data_nascimento.length  > 10 || user.data_nascimento == '' || user.data_nascimento > 200 ||
                id == ''                     || id == null                     || id == undefined                     || isNaN(id)
                )
                 {
                    return message.ERROR_REQUIRED_FIELDS//status code 400
                 }else{
                     //Verificar se o ID existe
-                    let result = await paisDAO.selectByIdPais(id)
+                    let result = await userDAO.selectByIdUsuario(id)
                     
                     if(result != false || typeof(result) == 'object'){
                         if(result.length > 0){
                             //Update
 
                             //Adiciona o atributo do ID no JSON com os dados recebidos do corpo da requisição
-                            pais.id = id
-                            let resultpais = await paisDAO.updatePais(pais)
+                            user.id = id
+                            let resultuser = await userDAO.updateUsuario(user)
 
-                            if(resultpais){
+                            if(resultuser){
                                 return message.SUCESS_UPDATED_ITEM//200
                             }else{
                                 return message.ERROR_INTERNAL_SERVER_MODEL//500
@@ -78,7 +89,8 @@ const atualizarPais = async function(id, pais, contentType){
     
 }
 
-const excluirPais = async function(numero){
+//Função para excluir uma usuario  existente
+const excluirUsuario = async function(numero){
    try {
 
     let id = numero
@@ -88,11 +100,11 @@ const excluirPais = async function(numero){
     }else{
         
         //Antes de excluir estamos verificando se o id enviado existe 
-        let resultPais = await paisDAO.selectByIdPais(id)
-        if(resultPais!= false || typeof(resultPais)== "object"){
-            if(resultPais.length > 0){
+        let resultuser = await userDAO.selectByIdUsuario(id)
+        if(resultuser!= false || typeof(resultuser)== "object"){
+            if(resultuser.length > 0){
                 //delete
-                let result = await paisDAO.deletePais(id)
+                let result = await userDAO.deleteUsuario(id)
 
                 if(result)
                     return message.SUCCES_DELETE_ITEM//200
@@ -111,22 +123,24 @@ const excluirPais = async function(numero){
    }
 }
 
-const listarPais = async function(){
+//Função para retornar uma lista usuarios
+const listarUsuario = async function(){
     try {
         //Criando um Objeto JSON
-        let dadosPais = {}
+        let dadosuser = {}
 
-        //Chama a função para retornar as paiss do banco de dados
-        let resultPais = await paisDAO.selectAllPais()
-        if(resultPais != false){
-            if(resultPais.length > 0){
-                //Cria um JSON para colocar o ARRAY de paiss
-                dadosPais.status = true
-                dadosPais.status_code = 200,
-                dadosPais.items = resultPais.length
-                dadosPais.country = resultPais
+        //Chama a função para retornar as users do banco de dados
+        let resultuser = await userDAO.selectAllUsuario()
 
-                return dadosPais
+        if(resultuser != false){
+            if(resultuser.length > 0){
+                //Cria um JSON para colocar o ARRAY de users
+                dadosuser.status = true
+                dadosuser.status_code = 200,
+                dadosuser.items = resultuser.length
+                dadosuser.musics = resultuser
+
+                return dadosuser
 
             }else{
                 return message.ERROR_NOT_FOUND//404
@@ -141,26 +155,28 @@ const listarPais = async function(){
     
 }
 
-const buscarPais = async function(id_pais_origem) {
+//Função para buscar um user pelo ID
+const buscarUsuario = async function(numero) {
     try {
+        let id = numero
 
         // Objeto JSON
-        let dadosPais = {}
+        let dadosuser = {}
 
-        if ( id_pais_origem == ''|| id_pais_origem == null || id_pais_origem == undefined || isNaN(id_pais_origem)){
+        if ( id == ''|| id == null || id == undefined || isNaN(id)){
             return message.ERROR_REQUIRED_FIELDS // status code 400
         }else{
             // Chama a função para retornar as músicas do banco de dados
-            let resultPais = await paisDAO.selectByIdPais(id_pais_origem)
+            let resultuser = await userDAO.selectByIdUsuario(id)
 
-            if(resultPais != false || typeof(resultPais) == 'object'){
-                if(resultPais.length > 0){
+            if(resultuser != false || typeof(resultuser) == 'object'){
+                if(resultuser.length > 0){
                     // Cria um JSON para colocar o Array de músicas 
-                    dadosPais.status = true
-                    dadosPais.status_code = 200,
-                    dadosPais.musics = resultPais
+                    dadosuser.status = true
+                    dadosuser.status_code = 200,
+                    dadosuser.musics = resultuser
 
-                    return dadosPais
+                    return dadosuser
                 }else{
                     return message.ERROR_NOT_FOUND // 404
                 }
@@ -175,9 +191,9 @@ const buscarPais = async function(id_pais_origem) {
 }
 
 module.exports = {
-    inserirPais,
-    atualizarPais,
-    excluirPais,
-    listarPais,
-    buscarPais
+    inserirUsuario,
+    atualizarUsuario,
+    excluirUsuario,
+    listarUsuario,
+    buscarUsuario
 }

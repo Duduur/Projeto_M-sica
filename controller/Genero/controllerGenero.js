@@ -1,5 +1,5 @@
 /********************************************************************************************************************************
-* Objetivo: Criar o CRUD de dados da tabela de musica no Banco de dados
+* Objetivo: Criar o CRUD de dados da tabela de genero no Banco de dados
 * Data: 10/04/2025
 * Autor: Eduardo
 * Versão: 1.0
@@ -35,43 +35,46 @@ const inserirGenero = async function(genero, contentType) {
     }
 }
 
-const atualizarGenero = async function(numero, genero, contentType){
+const atualizarGenero = async function(id, genero, contentType){
     try {
-        
-        let id = numero
-        
-        if (String(contentType).toLowerCase()== 'application/json'){
-            if (
-                genero.genero == '' || genero.genero == null || genero.genero == undefined || genero.genero.lenght >100 ||
-                id == '' || id == null || id == undefined || isNaN(id)
-            ) {
-                return message.ERROR_REQUIRED_FIELDS
-            }else{
-                
-                let result = await generoDAO.selectByIdGenero(id)
-                console.log(result)
-                if(result != false || typeof(result) == 'object'){
-                    if(result.lenght > 0 ){
-                        //Adiciona o atributo do ID no JSON com os dados recebidos do corpo da requisição
-                        genero.id = id
-                        let resultGenero = await generoDAO.updateGenero(genero)
-                        
-                        if(resultGenero){
-                           return message.SUCESS_UPDATED_ITEM//200
+        if(String(contentType).toLocaleLowerCase() == 'application/json' )
+            { 
+               if(
+               genero.genero            == '' || genero.genero            == null || genero.genero            == undefined || genero.genero.length            > 100 ||
+               id == ''                     || id == null                     || id == undefined                     || isNaN(id)
+               )
+                {
+                   return message.ERROR_REQUIRED_FIELDS//status code 400
+                }else{
+                    //Verificar se o ID existe
+                    let result = await generoDAO.selectByIdGenero(id)
+                    
+                    if(result != false || typeof(result) == 'object'){
+                        if(result.length > 0){
+                            //Update
+
+                            //Adiciona o atributo do ID no JSON com os dados recebidos do corpo da requisição
+                            genero.id = id
+                            let resultgenero = await generoDAO.updateGenero(genero)
+
+                            if(resultgenero){
+                                return message.SUCESS_UPDATED_ITEM//200
+                            }else{
+                                return message.ERROR_INTERNAL_SERVER_MODEL//500
+                            }
                         }else{
-                            return message.ERROR_INTERNAL_SERVER_MODEL//500
+                            return message.ERROR_NOT_FOUND//404
                         }
-                    }else{
-                        return message.ERROR_NOT_FOUND//404
                     }
                 }
+
+            }else{
+                return message.ERROR_CONTENT_TYPE//415
             }
-        }else{
-            return message.ERROR_CONTENT_TYPE//415
-        }
     } catch (error) {
-         return message.ERROR_INTERNAL_SERVER_CONTROLLER//500
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER//500
     }
+    
 }
 
 const excluirGenero = async function(numero){
@@ -85,6 +88,7 @@ const excluirGenero = async function(numero){
         
         //Antes de excluir estamos verificando se o id enviado existe 
         let resultGenero = await generoDAO.selectByIdGenero(id)
+
         if(resultGenero!= false || typeof(resultGenero)== "object"){
             if(resultGenero.length > 0){
                 //delete
@@ -112,12 +116,12 @@ const listarGenero = async function(){
         //Criando um Objeto JSON
         let dadosGenero = {}
 
-        //Chama a função para retornar as musicas do banco de dados
+        //Chama a função para retornar as generos do banco de dados
         let resultGenero = await generoDAO.selectAllGenero()
     
         if(resultGenero != false){
             if(resultGenero.length > 0){
-                //Cria um JSON para colocar o ARRAY de musicas
+                //Cria um JSON para colocar o ARRAY de generos
                 dadosGenero.status = true
                 dadosGenero.status_code = 200,
                 dadosGenero.items = resultGenero.length
@@ -150,8 +154,6 @@ const buscarGenero = async function(numero){
             return message.ERROR_REQUIRED_FIELDS//400   
         }else{
     
-            
-
             let resultGenero = await generoDAO.selectByIdGenero(id)
            
             if(resultGenero != false || typeof(resultGenero)== "object"){

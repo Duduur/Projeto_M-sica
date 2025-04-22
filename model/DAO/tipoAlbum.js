@@ -1,22 +1,26 @@
 /********************************************************************************************************************************
-* Objetivo: Criar o CRUD de dados da tabela de pais no Banco de dados
+* Objetivo: Criar o CRUD de dados da tabela de musica no Banco de dados
 * Data: 11/02/2025
 * Autor: Eduardo
 * Versão: 1.0
 *********************************************************************************************************************************/
 
+ //Import da biblioteca do  PrismaClient, para realizar as ações no banco de dados
 const {PrismaClient} = require('@prisma/client')
 
+//Instancia da classe do PrismaClient(criar um objeto)
 const prisma = new PrismaClient()
 
-const insertPais = async function(pais){
+//Função para inserir uma tipo de album
+const insertTipoAlbum = async function(tipo){
     try{
-        let sql  = `insert into tbl_pais_origem (
-                        pais                
+        let sql  = `insert into tbl_tipo_album (
+                    tipo_album 
                     ) 
-                    values ( 
-                        '${pais.pais}'
-                    )`
+                    values ( '${tipo.tipo_album}' )`
+
+        
+        
         //Await só vai funcionar se na função estiver com o async
         //Executa um script sql no banco de dados, e aguarda o resultado (retornando um true or false)
         let result  = await prisma.$executeRawUnsafe(sql)
@@ -32,11 +36,10 @@ const insertPais = async function(pais){
     }
 
 }
-
-const updatePais = async function(pais){
+//Função para atualizar um tipo existente
+const updateTipoAlbum = async function(tipo){
     try {
-        
-        let sql = `update tbl_pais_origem set pais = '${pais.pais}' where id_pais_origem = ${pais.id} `
+        let sql = `update tbl_tipo_album set tipo_album = '${tipo.tipo_album}'`
 
         let  result = await prisma.$executeRawUnsafe(sql)
 
@@ -46,16 +49,14 @@ const updatePais = async function(pais){
             return false
         
     } catch (error) {
-        console.log("Erro ao atualizar país:", error);
         return false
     }
 }
-
-
-const deletePais = async function(id){
+//Função para excluir um tipo de album existente
+const deleteTipoAlbum = async function(id){
     try {
 
-        let sql = `delete from tbl_pais_origem where id_pais_origem =${id}`
+        let sql = `delete from tbl_tipo_album where id=${id}`
 
         //
         let result = await prisma.$executeRawUnsafe(sql)
@@ -70,16 +71,16 @@ const deletePais = async function(id){
         return false
     }
 }
-
-const selectAllPais = async function(){
+//Função para retornar todas as musica do banco de dados
+const selectAllTipoAlbum = async function(){
     try {
 
         //Script SQL
-        let sql = 'select * from tbl_pais_origem order by id_pais_origem desc'
-       
+        let sql = 'select * from tbl_tipo_album order by id desc'
+
         //Encaminha o script SQL para o Banco de dados
         let result = await prisma.$queryRawUnsafe(sql)
-    
+
         if(result)
             return result//retorna dados do banco
         else
@@ -89,14 +90,14 @@ const selectAllPais = async function(){
         return false
     }
 }
-
-const selectByIdPais = async function(number) {
+//Função para buscar uma musica pelo ID
+const selectByIdTipoAlbum = async function(number) {
     try {
         // Recebe o ID
         let id = number 
         
         // Script SQL 
-        let sql = `select * from tbl_pais_origem where id_pais_origem =${id} `
+        let sql = `select * from tbl_tipo_album where id=${id} `
 
         // Encaminha o Script SQL para o BD
         let result = await prisma.$queryRawUnsafe(sql)
@@ -111,10 +112,11 @@ const selectByIdPais = async function(number) {
     }
 }
 
+
 module.exports = {
-    insertPais,
-    updatePais,
-    deletePais,
-    selectAllPais,
-    selectByIdPais
+    insertTipoAlbum,
+    selectAllTipoAlbum,
+    deleteTipoAlbum,
+    updateTipoAlbum,
+    selectByIdTipoAlbum
 }

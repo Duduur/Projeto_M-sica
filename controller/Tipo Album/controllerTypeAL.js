@@ -1,29 +1,32 @@
 /********************************************************************************************************************************
-* Objetivo: Controller reponsavel pela integração entre o APP e a Model (CRUD de dados),
+* Objetivo: Controller rsponsavel pela integração entre o APP e a Model (CRUD de dados),
 *           Validaçôes, tratamento  de dados etc...
-* Data: 15/04/2025
+* Data: 11/02/2025
 * Autor: Eduardo
 * Versão: 1.0
 *********************************************************************************************************************************/
 
+//Import do arquivo de mensagens e status code
 const message = require('../../modulo/config.js')
 
-const paisDAO = require('../../model/DAO/pais.js')
+//Import para realizar o CRUD no banco de dados
+const tipoDAO = require('../../model/DAO/tipoAlbum.js')
 
-const inserirPais = async function(pais, contentType){
+//Função para inserir uma nova tipo
+const inserirTipoAlbum = async function(tipo, contentType){
     try {
 
         if(String(contentType).toLocaleLowerCase() == 'application/json' )
          { 
             if(
-            pais.pais            == '' || pais.pais            == null || pais.pais            == undefined || pais.pais.length            > 100 
+            tipo.tipo_album            == '' || tipo.tipo_album            == null || tipo.tipo_album            == undefined || tipo.tipo_album.length            > 100 
             ){
                 return message.ERROR_REQUIRED_FIELDS//status code 400
          }else{
-                //encaminhando os dados da pais para o DAO realizar o insert no Banco de dados
-                let resultpais = await paisDAO.insertPais(pais)
-                
-                if(resultpais){
+                //encaminhando os dados da tipo para o DAO realizar o insert no Banco de dados
+                let resultTipo = await tipoDAO.insertTipoAlbum(tipo)
+
+                if(resultTipo){
                     return message.SUCCESS_CREATED_ITEM // 201
                 }else{
                     return message.ERROR_INTERNAL_SERVER_MODEL//500
@@ -36,29 +39,31 @@ const inserirPais = async function(pais, contentType){
         return message.ERROR_INTERNAL_SERVER_CONTROLLER//500
     }
 }
-const atualizarPais = async function(id, pais, contentType){
+
+//Função para atualizar uma tipo existente
+const atualizarTipoAlbum = async function(id, tipo, contentType){
     try {
         if(String(contentType).toLocaleLowerCase() == 'application/json' )
             { 
                if(
-               pais.pais            == '' || pais.pais            == null || pais.pais            == undefined || pais.pais.length            > 100 ||
+               tipo.tipo_album            == '' || tipo.tipo_album            == null || tipo.tipo_album            == undefined || tipo.tipo_album.length            > 100  ||
                id == ''                     || id == null                     || id == undefined                     || isNaN(id)
                )
                 {
                    return message.ERROR_REQUIRED_FIELDS//status code 400
                 }else{
                     //Verificar se o ID existe
-                    let result = await paisDAO.selectByIdPais(id)
+                    let result = await tipoDAO.selectByIdTipoAlbum(id)
                     
                     if(result != false || typeof(result) == 'object'){
                         if(result.length > 0){
                             //Update
 
                             //Adiciona o atributo do ID no JSON com os dados recebidos do corpo da requisição
-                            pais.id = id
-                            let resultpais = await paisDAO.updatePais(pais)
+                            tipo.id = id
+                            let resultTipo = await tipoDAO.updateTipoAlbum(tipo)
 
-                            if(resultpais){
+                            if(resultTipo){
                                 return message.SUCESS_UPDATED_ITEM//200
                             }else{
                                 return message.ERROR_INTERNAL_SERVER_MODEL//500
@@ -78,7 +83,8 @@ const atualizarPais = async function(id, pais, contentType){
     
 }
 
-const excluirPais = async function(numero){
+//Função para excluir uma tipo existente
+const excluirTipoAlbum = async function(numero){
    try {
 
     let id = numero
@@ -88,11 +94,11 @@ const excluirPais = async function(numero){
     }else{
         
         //Antes de excluir estamos verificando se o id enviado existe 
-        let resultPais = await paisDAO.selectByIdPais(id)
-        if(resultPais!= false || typeof(resultPais)== "object"){
-            if(resultPais.length > 0){
+        let resultTipo = await tipoDAO.selectByIdTipoAlbum(id)
+        if(resultTipo!= false || typeof(resultTipo)== "object"){
+            if(resultTipo.length > 0){
                 //delete
-                let result = await paisDAO.deletePais(id)
+                let result = await tipoDAO.deleteTipoAlbum(id)
 
                 if(result)
                     return message.SUCCES_DELETE_ITEM//200
@@ -111,22 +117,24 @@ const excluirPais = async function(numero){
    }
 }
 
-const listarPais = async function(){
+//Função para retornar uma lista de músicas
+const listarTipoAlbum = async function(){
     try {
         //Criando um Objeto JSON
-        let dadosPais = {}
+        let dadosTipo = {}
 
-        //Chama a função para retornar as paiss do banco de dados
-        let resultPais = await paisDAO.selectAllPais()
-        if(resultPais != false){
-            if(resultPais.length > 0){
-                //Cria um JSON para colocar o ARRAY de paiss
-                dadosPais.status = true
-                dadosPais.status_code = 200,
-                dadosPais.items = resultPais.length
-                dadosPais.country = resultPais
+        //Chama a função para retornar as tipos do banco de dados
+        let resultTipo = await tipoDAO.selectAllTipoAlbum()
 
-                return dadosPais
+        if(resultTipo != false){
+            if(resultTipo.length > 0){
+                //Cria um JSON para colocar o ARRAY de tipos
+                dadosTipo.status = true
+                dadosTipo.status_code = 200,
+                dadosTipo.items = resultTipo.length
+                dadosTipo.musics = resultTipo
+
+                return dadosTipo
 
             }else{
                 return message.ERROR_NOT_FOUND//404
@@ -141,26 +149,28 @@ const listarPais = async function(){
     
 }
 
-const buscarPais = async function(id_pais_origem) {
+//Função para buscar uma tipo pelo ID
+const buscarTipoAlbum = async function(numero) {
     try {
+        let id = numero
 
         // Objeto JSON
-        let dadosPais = {}
+        let dadosTipo = {}
 
-        if ( id_pais_origem == ''|| id_pais_origem == null || id_pais_origem == undefined || isNaN(id_pais_origem)){
+        if ( id == ''|| id == null || id == undefined || isNaN(id)){
             return message.ERROR_REQUIRED_FIELDS // status code 400
         }else{
             // Chama a função para retornar as músicas do banco de dados
-            let resultPais = await paisDAO.selectByIdPais(id_pais_origem)
+            let resultTipo = await tipoDAO.selectByIdTipoAlbum(id)
 
-            if(resultPais != false || typeof(resultPais) == 'object'){
-                if(resultPais.length > 0){
+            if(resultTipo != false || typeof(resultTipo) == 'object'){
+                if(resultTipo.length > 0){
                     // Cria um JSON para colocar o Array de músicas 
-                    dadosPais.status = true
-                    dadosPais.status_code = 200,
-                    dadosPais.musics = resultPais
+                    dadosTipo.status = true
+                    dadosTipo.status_code = 200,
+                    dadosTipo.musics = resultTipo
 
-                    return dadosPais
+                    return dadosTipo
                 }else{
                     return message.ERROR_NOT_FOUND // 404
                 }
@@ -175,9 +185,9 @@ const buscarPais = async function(id_pais_origem) {
 }
 
 module.exports = {
-    inserirPais,
-    atualizarPais,
-    excluirPais,
-    listarPais,
-    buscarPais
+   inserirTipoAlbum,
+   atualizarTipoAlbum,
+   excluirTipoAlbum,
+   listarTipoAlbum,
+   buscarTipoAlbum
 }
