@@ -29,6 +29,8 @@ const controllerPais = require('./controller/Pais/controllerPais')
 const controllerTipo = require('./controller/Tipo Album/controllerTypeAL')
 const controllerUsuario = require('.//controller/Usuario/controllerUsuario')
 const controllerGravadora = require('.//controller/Gravadora/controllerGravadora')
+const controllerArtista = require('./controller/Artista/controllerArtista')
+const controllerAlbum = require('./controller/Album/controllerAlbum')
 
 //Import das controllers do projeto
 const bodyParserJSON = bodyParser.json()
@@ -450,6 +452,145 @@ app.put('/v1/controle-musicas/gravadora/:id', cors(), bodyParserJSON, async func
 
     response.status(resultGravadora.status_code)
     response.json(resultGravadora)
+})
+
+/*------------------------------ENDPOINT - ARTISTA  -------------------------------------- -*/
+
+//EndPoit para inserir um Artista
+app.post('/v1/controle-musicas/artista', cors(), bodyParserJSON, async function (request, response) {
+
+    //Recebe o content type da requisição
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados do body na requisição
+    let dadosBody = request.body
+
+    //Chama a função de controller para inserir os dados e aguarda o retorno da função
+    let resultartista = await controllerArtista.inserirArtista(dadosBody, contentType)
+
+    response.status(resultartista.status_code)
+    response.json(resultartista)
+})
+
+//Endpoint para retornar todas os Artistas
+app.get('/v1/controle-musicas/artista', cors(), async function (request, response) {
+
+    let resultartista = await controllerArtista.listarArtista()
+
+    response.status(resultartista.status_code)
+    response.json(resultartista)
+
+})
+//Endpoint para buscar artista pelo id
+app.get('/v1/controle-musicas/artista/:id', cors(), async function (request, response) {
+
+    let id = request.params.id
+
+    let resultartista = await controllerArtista.buscarArtista(id)
+
+    response.status(resultartista.status_code)
+    response.json(resultartista)
+
+})
+
+//Endepoint para excluit artista
+app.delete('/v1/controle-musica/artista/:id', cors(), async function (request, response) {
+
+    let IdArtista = request.params.id
+
+    let resultartista = await controllerArtista.excluirArtista(IdArtista)
+
+    response.status(resultartista.status_code)
+    response.json(resultartista)
+})
+//Endpoint para atualizar artista
+app.put('/v1/controle-musicas/artista/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    //Recebe o content-type da requisição
+    let contentType = request.headers['content-type']
+
+    //Recebe o ID da Musica
+    let IdArtista = request.params.id
+
+    //Recebe os dados do corpo da requisição
+    let dadosBody = request.body
+
+
+    //Chama a função e encaminha os argumentos de: ID, body e Content-type
+    let resultartista = await controllerArtista.atualizarArtista(IdArtista, dadosBody, contentType)
+
+    response.status(resultartista.status_code)
+    response.json(resultartista)
+})
+
+
+/*------------------------------ENDPOINT - Album  -------------------------------------- -*/
+
+//EndPoit para inserir um Album
+app.post('/v1/controle-musicas/Album', cors(), bodyParserJSON, async function (request, response) {
+
+    //Recebe o content type da requisição
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados do body na requisição
+    let dadosBody = request.body
+
+    //Chama a função de controller para inserir os dados e aguarda o retorno da função
+    let resultAlbum = await controllerAlbum.inserirAlbum(dadosBody, contentType)
+
+    response.status(resultAlbum.status_code)
+    response.json(resultAlbum)
+})
+
+//Endpoint para retornar todas os Albuns
+app.get('/v1/controle-musicas/album', cors(), async function (request, response) {
+
+    let resultAlbum = await controllerAlbum.listaralbum()
+
+    response.status(resultAlbum.status_code)
+    response.json(resultAlbum)
+
+})
+//Endpoint para buscar Album pelo id
+app.get('/v1/controle-musicas/album/:id', cors(), async function (request, response) {
+
+    let id = request.params.id
+
+    let resultAlbum = await controllerAlbum.buscaralbum(id)
+
+    response.status(resultAlbum.status_code)
+    response.json(resultAlbum)
+
+})
+
+//Endepoint para excluit Album
+app.delete('/v1/controle-musica/album/:id', cors(), async function (request, response) {
+
+    let idAlbum = request.params.id
+
+    let resultAlbum = await controllerAlbum.excluirAlbum(idAlbum)
+
+    response.status(resultAlbum.status_code)
+    response.json(resultAlbum)
+})
+//Endpoint para atualizar Album
+app.put('/v1/controle-musicas/album/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    //Recebe o content-type da requisição
+    let contentType = request.headers['content-type']
+
+    //Recebe o ID da Album
+    let idAlbum = request.params.id
+
+    //Recebe os dados do corpo da requisição
+    let dadosBody = request.body
+
+
+    //Chama a função e encaminha os argumentos de: ID, body e Content-type
+    let resultAlbum = await controllerAlbum.atualizarAlbum(idAlbum, dadosBody, contentType)
+
+    response.status(resultAlbum.status_code)
+    response.json(resultAlbum)
 })
 
 app.listen(8080, function () {

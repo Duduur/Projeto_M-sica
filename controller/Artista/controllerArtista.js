@@ -11,9 +11,10 @@ const message = require('../../modulo/config.js')
 
 //Import para realizar o CRUD no banco de dados
 const artistaDAO = require('../../model/DAO/artista.js')
+const controllerPais =  require('../../controller/Pais/controllerPais.js')
 
 //Função para inserir uma nova artista
-const inserirartista = async function(artista, contentType){
+const inserirArtista = async function(artista, contentType){
     try {
 
         if(String(contentType).toLocaleLowerCase() == 'application/json' )
@@ -106,7 +107,7 @@ const excluirArtista = async function(numero){
         if(resultartista!= false || typeof(resultartista)== "object"){
             if(resultartista.length > 0){
                 //delete
-                let result = await artistaDAO.deleteartista(id)
+                let result = await artistaDAO.deleteArtista(id)
 
                 if(result)
                     return message.SUCCES_DELETE_ITEM//200
@@ -128,6 +129,9 @@ const excluirArtista = async function(numero){
 //Função para retornar uma lista de músicas
 const listarArtista = async function(){
     try {
+
+
+        let artistasArray = []
         //Criando um Objeto JSON
         let dadosartista = {}
 
@@ -140,7 +144,19 @@ const listarArtista = async function(){
                 dadosartista.status = true
                 dadosartista.status_code = 200,
                 dadosartista.items = resultartista.length
-                dadosartista.musics = resultartista
+                
+                for (const itemArtista of resultartista) {
+                    
+                    let dadosPAIS = await controllerPais.buscarPais(itemArtista.id_pais_origem)
+                    console.log(dadosPAIS)
+                    itemArtista.pais = dadosPAIS.pais
+
+                    delete itemArtista.id_pais_origem
+
+                    artistasArray.push(itemArtista)
+                }
+
+                dadosartista.artista = artistasArray
 
                 return dadosartista
 
@@ -162,6 +178,8 @@ const buscarArtista = async function(numero) {
     try {
         let id = numero
 
+        let artistasArray = []
+
         // Objeto JSON
         let dadosartista = {}
 
@@ -175,10 +193,23 @@ const buscarArtista = async function(numero) {
                 if(resultartista.length > 0){
                     // Cria um JSON para colocar o Array de músicas 
                     dadosartista.status = true
-                    dadosartista.status_code = 200,
-                    dadosartista.musics = resultartista
+                    dadosartista.status_code = 200
 
+                    for (const itemArtista of resultartista) {
+                    
+                        let dadosPAIS = await controllerPais.buscarPais(itemArtista)
+    
+                        itemArtista.pais = dadosPAIS.pais
+    
+                        delete itemArtista.id_pais_origem
+    
+                        artistasArray.push(itemArtista)
+                    }
+    
+                    dadosartista.artista = artistasArray
+    
                     return dadosartista
+    
                 }else{
                     return message.ERROR_NOT_FOUND // 404
                 }
@@ -193,7 +224,7 @@ const buscarArtista = async function(numero) {
 }
 
 module.exports = {
-    inserirartista,
+    inserirArtista,
     atualizarArtista,
     excluirArtista,
     listarArtista,

@@ -158,7 +158,7 @@ const buscarPais = async function(id_pais_origem) {
                     // Cria um JSON para colocar o Array de músicas 
                     dadosPais.status = true
                     dadosPais.status_code = 200,
-                    dadosPais.musics = resultPais
+                    dadosPais.pais = resultPais
 
                     return dadosPais
                 }else{
