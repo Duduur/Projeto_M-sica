@@ -13,6 +13,7 @@ const message = require('../../modulo/config.js')
 const albumDAO = require('../../model/DAO/album.js')
 const controllerTipoAlbum =  require('../../controller/Tipo Album/controllerTypeAL.js')
 const controllerGravadora =  require('../../controller/Gravadora/controllerGravadora.js')
+const controllerArtistaAlbum = require('../../controller/Album/controllerAlbumArtista.js')
 
 //Função para inserir uma nova album
 const inserirAlbum = async function(album, contentType){
@@ -33,7 +34,16 @@ const inserirAlbum = async function(album, contentType){
                 let resultalbum = await albumDAO.insertAlbum(album)
 
                 if(resultalbum){
-                    return message.SUCCESS_CREATED_ITEM // 201
+                    for(itemArtistaAlbum of album.artista){
+                        
+                        itemArtistaAlbum.id_album = resultalbum.id
+
+                        let resultArtistaAlbum = await controllerArtistaAlbum.inserirAlbumArtista(itemArtistaAlbum, contentType)
+
+                        if(!resultArtistaAlbum){
+                            return message.ERROR_CONTENT_TYPE
+                        }
+                    }
                 }else{
                     return message.ERROR_INTERNAL_SERVER_MODEL//500
                 }
@@ -42,6 +52,7 @@ const inserirAlbum = async function(album, contentType){
             return message.ERROR_CONTENT_TYPE//415
         }
     } catch (error) {
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER_CONTROLLER//500
     }
 }
@@ -146,26 +157,24 @@ const listaralbum = async function(){
                 dadosalbum.status_code = 200,
                 dadosalbum.items = resultalbum.length
                 
-                for (const itemAlbum of resultalbum) {
-                    
-                   /*************************** For of do Tipo do album ************************/
-                    let dadosTipoAlbum = await controllerTipoAlbum.buscarTipoAlbum(itemAlbum.id)
-                
-                    itemAlbum.tipo_album = dadosTipoAlbum.tipo_album
-
+                for(const itemAlbum of resultalbum){
+                    let dadosAlbum = await controllerTipoAlbum.buscarTipoAlbum(itemAlbum.id_tipo_album)
+                    itemAlbum.tipo_album = dadosAlbum.tipo_album
                     delete itemAlbum.id_tipo_album
-
-                    /*************************For of da Gravadora******************************/
-                    let dadosGravadora = await controllerGravadora.buscarGravadora(itemAlbum.id)
+                    
+                    let dadosGravadora = await controllerGravadora.buscarGravadora(itemAlbum.id_gravadora)
                     itemAlbum.gravadora = dadosGravadora.gravadora
 
                     delete itemAlbum.id_gravadora
+
+                    let dadosArtistAlbum= await controllerArtistaAlbum.buscarAlbumArtista(itemAlbum.id)
+                    itemAlbum.artista = dadosArtistAlbum.artista
 
                     albumsArray.push(itemAlbum)
                 }
 
                 dadosalbum.album = albumsArray
-
+                console.log(dadosalbum)
                 return dadosalbum
 
             }else{
@@ -195,7 +204,7 @@ const buscaralbum = async function(numero) {
             return message.ERROR_REQUIRED_FIELDS // status code 400
         }else{
             // Chama a função para retornar as músicas do banco de dados
-            let resultalbum = await albumDAO.selectByIdalbum(id)
+            let resultalbum = await albumDAO.selectByIdAlbum(id)
 
             if(resultalbum != false || typeof(resultalbum) == 'object'){
                 if(resultalbum.length > 0){

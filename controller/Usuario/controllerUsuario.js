@@ -138,7 +138,7 @@ const listarUsuario = async function(){
                 dadosuser.status = true
                 dadosuser.status_code = 200,
                 dadosuser.items = resultuser.length
-                dadosuser.musics = resultuser
+                dadosuser.usuario = resultuser
 
                 return dadosuser
 
@@ -174,7 +174,7 @@ const buscarUsuario = async function(numero) {
                     // Cria um JSON para colocar o Array de músicas 
                     dadosuser.status = true
                     dadosuser.status_code = 200,
-                    dadosuser.musics = resultuser
+                    dadosuser.usuario = resultuser
 
                     return dadosuser
                 }else{

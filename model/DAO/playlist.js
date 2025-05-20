@@ -1,6 +1,6 @@
 /********************************************************************************************************************************
-* Objetivo: Criar o CRUD de dados da tabela de albums no Banco de dados
-* Data: 13/05/2025
+* Objetivo: Criar o CRUD de dados da tabela de playlists no Banco de dados
+* Data: 06/05/2025
 * Autor: Eduardo
 * Versão: 1.0
 *********************************************************************************************************************************/
@@ -11,22 +11,19 @@ const {PrismaClient} = require('@prisma/client')
 //Instancia da classe do PrismaClient(criar um objeto)
 const prisma = new PrismaClient()
 
-//Função para inserir uma nova album
-const insertAlbum = async function(album){
+//Função para inserir uma nova playlist
+const insertPlaylist = async function(playlist){
     try{
-        let sql  = `insert into tbl_album (
-                        nome, 
-                        data_lancamento, 
-                        foto_album, 
-                        id_tipo_album, 
-                        id_gravadora) 
+        let sql  = `insert into tbl_playlist (
+                        nome_playlist, 
+                        data_criacao, 
+                        capa_playlist,  
+                        id_usuario) 
                     values ( 
-                        '${album.nome}', 
-                        '${album.data_lancamento}', 
-                        '${album.foto_album}', 
-                        ${album.id_tipo_album}, 
-                        ${album.id_gravadora}
-                        )`
+                        '${playlist.nome_playlist}', 
+                        '${playlist.data_criacao}', 
+                        '${playlist.capa_playlist}',  
+                        '${playlist.id_usuario}')`
 
         
         
@@ -34,30 +31,25 @@ const insertAlbum = async function(album){
         //Executa um script sql no banco de dados, e aguarda o resultado (retornando um true or false)
         let result  = await prisma.$executeRawUnsafe(sql)
 
-        if(result){
-            let sqlSelect = `SELECT * FROM tbl_album WHERE nome = '${album.nome}' ORDER BY id DESC LIMIT 1`
-
-            let criado = await prisma.$queryRawUnsafe(sqlSelect)
-            return criado[0]
-
-        }else{
+        if(result)
+            return  true
+        else
             return false//Bug no Banco de dados
-        }
+        
         }catch(error){
             
             return false//Bug de programação
     }
 
 }
-//Função para atualizar uma album existente
-const updateAlbum = async function(album){
+//Função para atualizar uma playlist existente
+const updatePlaylist = async function(playlist){
     try {
-        let sql = `update tbl_album set nome = '${album.nome}',
-                                        data_lancamento = '${album.data_lancamento}', 
-                                        foto_album = '${album.foto_album}', 
-                                        foto_album = '${album.id_tipo_album}', 
-                                        id_pais_origem = '${album.id_gravadora}' 
-                                        where id = ${album.id} `
+        let sql = `update tbl_playlist set nome_playlist = '${playlist.nome_playlist}',
+                                        data_criacao = '${playlist.data_criacao}', 
+                                        capa_playlist = '${playlist.capa_playlist}',  
+                                        id_usuario = '${playlist.id_usuario}' 
+                                        where id = ${playlist.id} `
 
         let  result = await prisma.$executeRawUnsafe(sql)
 
@@ -70,11 +62,11 @@ const updateAlbum = async function(album){
         return false
     }
 }
-//Função para excluir uma album existente
-const deleteAlbum = async function(id){
+//Função para excluir uma playlist existente
+const deletePlaylist = async function(id){
     try {
 
-        let sql = `delete from tbl_album where id=${id}`
+        let sql = `delete from tbl_playlist where id=${id}`
 
         //
         let result = await prisma.$executeRawUnsafe(sql)
@@ -89,12 +81,12 @@ const deleteAlbum = async function(id){
         return false
     }
 }
-//Função para retornar todas as album do banco de dados
-const selectAllAlbum = async function(){
+//Função para retornar todas as playlist do banco de dados
+const selectAllPlaylist = async function(){
     try {
 
         //Script SQL
-        let sql = 'select * from tbl_album order by id desc'
+        let sql = 'select * from tbl_playlist order by id desc'
 
         //Encaminha o script SQL para o Banco de dados
         let result = await prisma.$queryRawUnsafe(sql)
@@ -108,14 +100,14 @@ const selectAllAlbum = async function(){
         return false
     }
 }
-//Função para buscar uma album pelo ID
-const selectByIdAlbum = async function(number) {
+//Função para buscar uma playlist pelo ID
+const selectByIdPlaylist = async function(number) {
     try {
         // Recebe o ID
         let id = number 
         
         // Script SQL 
-        let sql = `select * from tbl_album where id=${id} `
+        let sql = `select * from tbl_playlist where id=${id} `
 
         // Encaminha o Script SQL para o BD
         let result = await prisma.$queryRawUnsafe(sql)
@@ -132,9 +124,9 @@ const selectByIdAlbum = async function(number) {
 
 
 module.exports = {
-    insertAlbum,
-    updateAlbum,
-    deleteAlbum,
-    selectAllAlbum,
-    selectByIdAlbum
+    insertPlaylist,
+    updatePlaylist,
+    deletePlaylist,
+    selectAllPlaylist,
+    selectByIdPlaylist
 }

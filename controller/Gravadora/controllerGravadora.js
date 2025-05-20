@@ -138,7 +138,7 @@ const listarGravadora = async function(){
                 dadosgravadora.status = true
                 dadosgravadora.status_code = 200,
                 dadosgravadora.items = resultgravadora.length
-                dadosgravadora.musics = resultgravadora
+                dadosgravadora.gravadora = resultgravadora
 
                 return dadosgravadora
 
@@ -174,7 +174,7 @@ const buscarGravadora = async function(numero) {
                     // Cria um JSON para colocar o Array de músicas 
                     dadosgravadora.status = true
                     dadosgravadora.status_code = 200,
-                    dadosgravadora.musics = resultgravadora
+                    dadosgravadora.gravadora = resultgravadora
 
                     return dadosgravadora
                 }else{

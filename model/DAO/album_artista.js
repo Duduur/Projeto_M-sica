@@ -1,6 +1,6 @@
 /********************************************************************************************************************************
-* Objetivo: Criar o CRUD de dados da tabela de albumArtistas no Banco de dados
-* Data: 06/05/2025
+* Objetivo: Criar o CRUD de dados da tabela de albumArtista no Banco de dados
+* Data: 11/02/2025
 * Autor: Eduardo
 * Versão: 1.0
 *********************************************************************************************************************************/
@@ -12,16 +12,20 @@ const {PrismaClient} = require('@prisma/client')
 const prisma = new PrismaClient()
 
 //Função para inserir uma nova albumArtista
-const insertAlbumArtista = async function(albumArtista){
+const insertalbumArtista = async function(albumArtista){
     try{
         let sql  = `insert into tbl_artista_album (
-                        id_artista, 
-                        id_album, 
-                        ) 
-                    values ( 
-                        '${albumArtista.id_artista}', 
-                        '${albumArtista.id_album}'
-                       )`
+                                        id_artista,
+                                        id_album
+                                        ) 
+                                    values 
+                                        ( 
+                                        ${albumArtista.id_artista},
+                                        ${albumArtista.id_album}
+                                        )`
+
+        
+        
         //Await só vai funcionar se na função estiver com o async
         //Executa um script sql no banco de dados, e aguarda o resultado (retornando um true or false)
         let result  = await prisma.$executeRawUnsafe(sql)
@@ -40,9 +44,9 @@ const insertAlbumArtista = async function(albumArtista){
 //Função para atualizar uma albumArtista existente
 const updateAlbumArtista = async function(albumArtista){
     try {
-        let sql = `update tbl_artista_album set id_artista = '${albumArtista.id_artista}',
-                                        id_album = '${albumArtista.id_album}',  
-                                        where id = ${albumArtista.id} `
+        let sql = `update tbl_artista_album set id_artista = ${albumArtista.id_artista},
+                                                             ${albumArtista.id_album}
+                    where id = ${albumArtista.id} `
 
         let  result = await prisma.$executeRawUnsafe(sql)
 
@@ -75,7 +79,7 @@ const deleteAlbumArtista = async function(id){
     }
 }
 //Função para retornar todas as albumArtista do banco de dados
-const selectAllalbumArtista = async function(){
+const selectAllAlbumArtista = async function(){
     try {
 
         //Script SQL
@@ -94,7 +98,7 @@ const selectAllalbumArtista = async function(){
     }
 }
 //Função para buscar uma albumArtista pelo ID
-const selectByIdalbumArtista = async function(number) {
+const selectByIdAlbumArtista = async function(number) {
     try {
         // Recebe o ID
         let id = number 
@@ -114,54 +118,56 @@ const selectByIdalbumArtista = async function(number) {
         return false
     }
 }
-//Função para retornar Album pelo artista
-const selectAlbumByIdArtista = async function (IdArtista) {
+
+//Função para retornar os filmes pelo genero
+const selectAlbumByIdArtista = async function(idAlbum){
     try {
         let sql = `select tbl_album.* from tbl_album
-                                    inner join tbl_artista_album
-                                        on tbl_album.id = tbl_artista_album.id_album
-                                    inner join tbl_artista
-                                        on tbl_artista.id = tbl_Artista_album.id_artista
-                    where tbl_artista_album.id_artista = ${IdArtista}`
-
+                                              inner join tbl_artista_album
+                                                on tbl_album.id = tbl_artista_album.id_album
+                                              inner join tbl_artista
+                                                on tbl_artista.id = tbl_artista_album.id_artista
+                    where tbl_artista_album.id_artista = ${idAlbum}`
+  
         let result = await prisma.$queryRawUnsafe(sql)
-
-        if (result)
-            return result
-        else 
-            return false
+  
+      if (result)
+          return result
+      else 
+          return false
     } catch (error) {
         return false
     }
-}
-
-const selectArtistaByIdAlbum = async function (idAlbum) {
+  }
+  
+  //Função para retornar os generos pelo Filme
+  const selectArtistaByIdAlbum = async function(idArtista){
     try {
         let sql = `select tbl_artista.* from tbl_album
-                                    inner join tbl_artista_album
-                                        on tbl_album.id = tbl_artista_album.id_album
-                                    inner join tbl_artista
-                                        on tbl_artista.id = tbl_Artista_album.id_artista
-                    where tbl_artista_album.id_album = ${idAlbum}`
-
+                                              inner join tbl_artista_album
+                                                on tbl_album.id = tbl_artista_album.id_album
+                                              inner join tbl_artista
+                                                on tbl_artista.id = tbl_artista_album.id_artista
+                    where tbl_artista_album.id_album = ${idArtista}`
+  
         let result = await prisma.$queryRawUnsafe(sql)
-
-        if (result)
-            return result
-        else 
-            return false
+  
+      if (result)
+          return result
+      else 
+          return false
     } catch (error) {
         return false
     }
-}
+  }
 
 
 module.exports = {
-    insertAlbumArtista,
+    insertalbumArtista,
     updateAlbumArtista,
     deleteAlbumArtista,
-    selectAllalbumArtista,
-    selectByIdalbumArtista,
+    selectAllAlbumArtista,
+    selectByIdAlbumArtista,
     selectAlbumByIdArtista,
     selectArtistaByIdAlbum
 }

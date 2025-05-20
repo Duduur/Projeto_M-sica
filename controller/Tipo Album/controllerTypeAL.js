@@ -132,7 +132,7 @@ const listarTipoAlbum = async function(){
                 dadosTipo.status = true
                 dadosTipo.status_code = 200,
                 dadosTipo.items = resultTipo.length
-                dadosTipo.musics = resultTipo
+                dadosTipo.tipo_album = resultTipo
 
                 return dadosTipo
 
@@ -168,7 +168,7 @@ const buscarTipoAlbum = async function(numero) {
                     // Cria um JSON para colocar o Array de músicas 
                     dadosTipo.status = true
                     dadosTipo.status_code = 200,
-                    dadosTipo.musics = resultTipo
+                    dadosTipo.tipo_album = resultTipo
 
                     return dadosTipo
                 }else{

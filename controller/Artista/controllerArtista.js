@@ -148,7 +148,7 @@ const listarArtista = async function(){
                 for (const itemArtista of resultartista) {
                     
                     let dadosPAIS = await controllerPais.buscarPais(itemArtista.id_pais_origem)
-                    console.log(dadosPAIS)
+
                     itemArtista.pais = dadosPAIS.pais
 
                     delete itemArtista.id_pais_origem
@@ -197,7 +197,7 @@ const buscarArtista = async function(numero) {
 
                     for (const itemArtista of resultartista) {
                     
-                        let dadosPAIS = await controllerPais.buscarPais(itemArtista)
+                        let dadosPAIS = await controllerPais.buscarPais(itemArtista.id_pais_origem)
     
                         itemArtista.pais = dadosPAIS.pais
     
